@@ -55,6 +55,7 @@ import { CommandOutput } from "../../lib/formatters/output.js";
 import { runInteractiveLogin } from "../../lib/interactive-login.js";
 import { interactivePromptsAllowed } from "../../lib/interactive-prompts.js";
 import { logger } from "../../lib/logger.js";
+import { bootstrapAuthentication } from "../../lib/setup-code.js";
 import {
   addToFpath,
   addToGitHubPath,
@@ -778,6 +779,11 @@ export const setupCommand = buildCommand({
       freshInstall = result.created;
     }
 
+    if (getEnv().SENTRY_SETUP_CODE) {
+      await bootstrapAuthentication();
+      emit("Authenticated with Sentry using the setup code.");
+    }
+
     // 1–4. Run best-effort configuration steps
     await runConfigurationSteps({
       flags,
@@ -830,6 +836,7 @@ export const setupCommand = buildCommand({
       flags.quiet ||
       flags["ensure-auth-scopes"] ||
       getEnv().SENTRY_INIT === "1" ||
+      Boolean(getEnv().SENTRY_SETUP_CODE) ||
       !(interactivePromptsAllowed() && isatty(0) && isatty(1) && isatty(2))
     ) {
       return;

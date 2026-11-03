@@ -1022,6 +1022,37 @@ describe("sentry cli setup", () => {
       };
     }
 
+    test("redeems a setup code after installing without opening a browser", async () => {
+      const claim = Buffer.from(
+        JSON.stringify({ url: "https://sentry.io", iat: 1 }),
+      ).toString("base64");
+      const code = "sntryc_" + claim + "_" + "a".repeat(43);
+      const fixture = createInstall({ env: { SENTRY_SETUP_CODE: code } });
+      const fetch = vi.fn().mockResolvedValue(
+        Response.json({
+          access_token: "setup-token",
+          refresh_token: "refresh-token",
+          expires_in: 3600,
+          token_type: "bearer",
+        }),
+      );
+      vi.stubGlobal("fetch", fetch);
+      try {
+        await fixture.run();
+        expect(readFileSync(fixture.binaryPath, "utf8")).toBe("fixture-binary");
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(getAuthConfig()?.token).toBe("setup-token");
+        expect(fixture.getOutput()).toContain(
+          "Authenticated with Sentry using the setup code",
+        );
+        expect(fixture.getOutput()).not.toContain(code);
+        expect(interactiveLogin.runInteractiveLogin).not.toHaveBeenCalled();
+        expect(fixture.context.process.exitCode).toBe(0);
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    });
+
     test("starts OAuth only after installing the binary and displaying success", async () => {
       const fixture = createInstall();
       vi.mocked(interactiveLogin.runInteractiveLogin).mockImplementation(
