@@ -26,7 +26,6 @@ vi.mock("../../../src/lib/git.js", () => ({
   isInsideGitWorkTree: () => true,
   isShallowRepository: () => false,
   getCommitLog: () => [],
-  getUncommittedFiles: () => [],
   parseRemoteUrl: (url: string) => url,
 }));
 
