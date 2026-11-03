@@ -1,4 +1,5 @@
 import { buildRouteMap } from "../../lib/route-map.js";
+import { bootstrapCommand } from "./bootstrap.js";
 import { authDefaultCommand } from "./default.js";
 import { listCommand } from "./list.js";
 import { loginCommand } from "./login.js";
@@ -15,6 +16,7 @@ export const authRoute = buildRouteMap({
     default: authDefaultCommand,
     list: listCommand,
     login: loginCommand,
+    bootstrap: bootstrapCommand,
     logout: logoutCommand,
     refresh: refreshCommand,
     status: statusCommand,
