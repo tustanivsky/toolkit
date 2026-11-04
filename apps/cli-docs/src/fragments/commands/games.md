@@ -6,13 +6,9 @@ Steer with the arrow keys, pause with `p`, retry with `r`, and quit with `esc`
 or `q`. The game needs an interactive terminal and is not available when an AI
 agent runs the CLI.
 
-### Show the leaderboard
+## Leaderboard
 
-```bash
-sentry games leaderboard
-```
-
-Shows the top Snake scores from the last 30 days. Your own row is marked
+`sentry games leaderboard` shows the top Snake scores from the last 30 days. Your own row is marked
 `(you)`. Use `--json` for machine-readable output.
 
 ## Anonymous scores
